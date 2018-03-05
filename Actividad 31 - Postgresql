@@ -1,0 +1,165 @@
+create database call_list;
+
+create table users (id integer primary key, first_name varchar(50), email varchar(50));
+
+call_list=# select * from users
+call_list-# ;
+ id | first_name | email
+----+------------+-------
+(0 rows)
+
+call_list=# INSERT INTO users (id, first_name, email) values (1, 'Carlos', 'carlos@powerlabs.com');
+INSERT 0 1
+call_list=# select * from users
+call_list-# ;
+ id | first_name |        email
+----+------------+----------------------
+  1 | Carlos     | carlos@powerlabs.com
+(1 row)
+
+call_list=# INSERT INTO users (id, first_name, email) values (2, 'Laura', 'laura@powerlabs.com');
+INSERT 0 1
+call_list=# select * from users
+call_list-# ;
+ id | first_name |        email
+----+------------+----------------------
+  1 | Carlos     | carlos@powerlabs.com
+  2 | Laura      | laura@powerlabs.com
+(2 rows)
+
+call_list=# create table calls (id integer primary key, phone integer, date date, user_id integer references users(id));
+
+call_list=# alter table users add column last_name varchar(50);
+ALTER TABLE
+call_list=# select * from users
+call_list-# ;
+ id | first_name |        email         | last_name
+----+------------+----------------------+-----------
+  1 | Carlos     | carlos@powerlabs.com |
+  2 | Laura      | laura@powerlabs.com  |
+(2 rows)
+
+call_list=# UPDATE users
+call_list-# SET last_name = 'Ibarra'
+call_list-# WHERE  id = 1;
+UPDATE 1
+call_list=# select * from users
+call_list-# ;
+ id | first_name |        email         | last_name
+----+------------+----------------------+-----------
+  2 | Laura      | laura@powerlabs.com  |
+  1 | Carlos     | carlos@powerlabs.com | Ibarra
+(2 rows)
+
+call_list=# UPDATE users
+call_list-# SET last_name = 'Guzman'
+call_list-# WHERE id = 2;
+UPDATE 1
+call_list=# select * from users;
+ id | first_name |        email         | last_name
+----+------------+----------------------+-----------
+  1 | Carlos     | carlos@powerlabs.com | Ibarra
+  2 | Laura      | laura@powerlabs.com  | Guzman
+(2 rows)
+
+call_list=# INSERT INTO calls values (1, 2341234,'20180422', 1);
+INSERT 0 1
+call_list=# select * from calls;
+ id |  phone  |    date    | user_id
+----+---------+------------+---------
+  1 | 2341234 | 2018-04-22 |       1
+(1 row)
+
+call_list=# INSERT INTO calls values (2, 2341244,'20180422', 1);
+INSERT 0 1
+call_list=# INSERT INTO calls values (3, 2343244,'20180422', 1);
+INSERT 0 1
+call_list=# INSERT INTO calls values (4, 2143244,'20180422', 1);
+INSERT 0 1
+call_list=# select * from calls;
+ id |  phone  |    date    | user_id
+----+---------+------------+---------
+  1 | 2341234 | 2018-04-22 |       1
+  2 | 2341244 | 2018-04-22 |       1
+  3 | 2343244 | 2018-04-22 |       1
+  4 | 2143244 | 2018-04-22 |       1
+(4 rows)
+
+call_list=# INSERT INTO calls values (5, 2143744,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (6, 2103744,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (7, 2103764,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (8, 2153764,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (9, 2183764,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (10, 2183964,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (11, 4183964,'20180422', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls values (12, 4583964,'20180422', 2);
+INSERT 0 1
+call_list=# select * from calls;
+ id |  phone  |    date    | user_id
+----+---------+------------+---------
+  1 | 2341234 | 2018-04-22 |       1
+  2 | 2341244 | 2018-04-22 |       1
+  3 | 2343244 | 2018-04-22 |       1
+  4 | 2143244 | 2018-04-22 |       1
+  5 | 2143744 | 2018-04-22 |       2
+  6 | 2103744 | 2018-04-22 |       2
+  7 | 2103764 | 2018-04-22 |       2
+  8 | 2153764 | 2018-04-22 |       2
+  9 | 2183764 | 2018-04-22 |       2
+ 10 | 2183964 | 2018-04-22 |       2
+ 11 | 4183964 | 2018-04-22 |       2
+ 12 | 4583964 | 2018-04-22 |       2
+(12 rows)
+
+call_list=# INSERT INTO users (id, first_name, email, last_name) values (3, 'Patricio', 'patricio@powerlabs.com', 'Ibarra');
+INSERT 0 1
+call_list=# select * from users;
+ id | first_name |         email          | last_name
+----+------------+------------------------+-----------
+  1 | Carlos     | carlos@powerlabs.com   | Ibarra
+  2 | Laura      | laura@powerlabs.com    | Guzman
+  3 | Patricio   | patricio@powerlabs.com | Ibarra
+(3 rows)
+
+call_list=# select * from users inner join calls on (users.id = calls.user_id);
+ id | first_name |        email         | last_name | id |  phone  |    date    | user_id
+----+------------+----------------------+-----------+----+---------+------------+---------
+  1 | Carlos     | carlos@powerlabs.com | Ibarra    |  1 | 2341234 | 2018-04-22 |       1
+  1 | Carlos     | carlos@powerlabs.com | Ibarra    |  2 | 2341244 | 2018-04-22 |       1
+  1 | Carlos     | carlos@powerlabs.com | Ibarra    |  3 | 2343244 | 2018-04-22 |       1
+  1 | Carlos     | carlos@powerlabs.com | Ibarra    |  4 | 2143244 | 2018-04-22 |       1
+  2 | Laura      | laura@powerlabs.com  | Guzman    |  5 | 2143744 | 2018-04-22 |       2
+  2 | Laura      | laura@powerlabs.com  | Guzman    |  6 | 2103744 | 2018-04-22 |       2
+  2 | Laura      | laura@powerlabs.com  | Guzman    |  7 | 2103764 | 2018-04-22 |       2
+  2 | Laura      | laura@powerlabs.com  | Guzman    |  8 | 2153764 | 2018-04-22 |       2
+:
+
+call_list=# select first_name, count (phone) from users inner join calls on (users.id = calls.user_id) group by first_name;
+ first_name | count
+------------+-------
+ Carlos     |     4
+ Laura      |     8
+(2 rows)
+
+call_list=# select first_name, date from users inner join calls on (users.id = calls.user_id) WHERE first_name = 'Carlos' order by date desc;
+ first_name |    date
+------------+------------
+ Carlos     | 2018-04-22
+ Carlos     | 2018-04-22
+ Carlos     | 2018-04-22
+ Carlos     | 2018-04-22
+(4 rows)
+
+call_list=# create table audits (id integer primary key, user_id integer references users(id), delete_call_motiv varchar(140));
+CREATE TABLE
+call_list=# select * from audits;
+ id | user_id | delete_call_motiv
+----+---------+-------------------
+(0 rows)
